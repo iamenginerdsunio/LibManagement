@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Issue Loan – LibManagement{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{{ url_for('loans') }}" class="text-decoration-none text-muted">
+    <i class="bi bi-arrow-left me-1"></i>Back to Loans
+  </a>
+</div>
+
+<div class="card" style="max-width: 560px;">
+  <div class="card-header"><h4 class="mb-0"><i class="bi bi-arrow-bar-right me-2"></i>Issue a Loan</h4></div>
+  <div class="card-body">
+    {% if not books %}
+    <div class="alert alert-warning">
+      No books are currently available for borrowing.
+      <a href="{{ url_for('add_book') }}">Add a book</a>.
+    </div>
+    {% elif not members %}
+    <div class="alert alert-warning">
+      No members registered yet.
+      <a href="{{ url_for('add_member') }}">Register a member</a>.
+    </div>
+    {% else %}
+    <form method="post">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Book <span class="text-danger">*</span></label>
+        <select name="book_id" class="form-select" required>
+          <option value="" disabled selected>Select a book…</option>
+          {% for book in books %}
+          <option value="{{ book.id }}">{{ book.title }} — {{ book.author }} ({{ book.available }} available)</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Member <span class="text-danger">*</span></label>
+        <select name="member_id" class="form-select" required>
+          <option value="" disabled selected>Select a member…</option>
+          {% for member in members %}
+          <option value="{{ member.id }}">{{ member.name }} ({{ member.email }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Loan Duration (days)</label>
+        <input type="number" name="days" class="form-control" min="1" max="365" value="14">
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-info text-white">
+          <i class="bi bi-check-lg me-1"></i>Issue Loan
+        </button>
+        <a href="{{ url_for('loans') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

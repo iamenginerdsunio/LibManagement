@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }} – LibManagement{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{{ url_for('members') }}" class="text-decoration-none text-muted">
+    <i class="bi bi-arrow-left me-1"></i>Back to Members
+  </a>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Member Details</h5>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('edit_member', member_id=member.id) }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i>Edit
+          </a>
+          <form method="post" action="{{ url_for('delete_member', member_id=member.id) }}"
+                onsubmit="return confirm('Delete this member?');">
+            <button class="btn btn-sm btn-outline-danger" type="submit">
+              <i class="bi bi-trash me-1"></i>Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-5">Name</dt>
+          <dd class="col-7">{{ member.name }}</dd>
+          <dt class="col-5">Email</dt>
+          <dd class="col-7 text-break">{{ member.email }}</dd>
+          <dt class="col-5">Phone</dt>
+          <dd class="col-7">{{ member.phone or '—' }}</dd>
+          <dt class="col-5">Joined</dt>
+          <dd class="col-7">{{ member.joined_at.strftime('%Y-%m-%d') }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-clock-history me-1"></i>Loan History</div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Book</th>
+              <th>Borrowed</th>
+              <th>Due</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for loan in loans %}
+            <tr>
+              <td><a href="{{ url_for('book_detail', book_id=loan.book.id) }}">{{ loan.book.title }}</a></td>
+              <td>{{ loan.borrowed_at.strftime('%Y-%m-%d') }}</td>
+              <td>{{ loan.due_date.strftime('%Y-%m-%d') }}</td>
+              <td>
+                {% if loan.returned_at %}
+                  <span class="badge bg-secondary">Returned {{ loan.returned_at.strftime('%Y-%m-%d') }}</span>
+                {% elif loan.is_overdue %}
+                  <span class="badge bg-danger">Overdue</span>
+                {% else %}
+                  <span class="badge bg-success">Active</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">No loans for this member.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
