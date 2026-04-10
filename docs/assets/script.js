@@ -1,1 +1,1 @@
-// full JS
+console.log('wiki');
